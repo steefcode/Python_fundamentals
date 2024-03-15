@@ -1,0 +1,2 @@
+Opmerkingen reflectie opdracht: 
+Subopdracht 9. Er wordt aangegeven dat de locatie niet mag worden gewijzigd. Maar er staat niet gespecificeerd wat met locatie wordt bedoeld. Dat kan namelijk de combinatie zijn van Plaats, Postcode, Straat maar ook eventueel de Xwaarde en Ywaarde. Voor de opdracht heb ik nu geinterpreteerd dat de plaats niet mag worden gewijzigd. 

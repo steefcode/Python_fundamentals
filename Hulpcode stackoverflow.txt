@@ -1,0 +1,127 @@
+-------------- Wegschrijven dataframes
+
+import pandas as pd
+
+# Example DataFrame
+data = {'Name': ['John', 'Jane', 'Tom'],
+        'Age': [28, 35, 42],
+        'City': ['New York', 'London', 'Sydney']}
+df = pd.DataFrame(data)
+
+# Convert the DataFrame to a string
+df_str = df.to_string(index=False)
+
+# Write the string representation to a txt file
+with open('output.txt', 'w') as file:
+    file.writelines(df_str)
+
+-------------- concatenate dataframes
+
+import pandas as pd
+
+class DataFrameConcatenator:
+    def __init__(self):
+        self.dataframes = []
+
+    def add_dataframe(self, dataframe):
+        """
+        Add a Pandas DataFrame to the list of DataFrames to be concatenated.
+
+        Parameters:
+            dataframe (pd.DataFrame): The Pandas DataFrame to be added.
+        """
+        if not isinstance(dataframe, pd.DataFrame):
+            raise ValueError("Input must be a Pandas DataFrame")
+        self.dataframes.append(dataframe)
+
+    def concatenate(self, axis=0):
+        """
+        Concatenate all the DataFrames in the list.
+
+        Parameters:
+            axis (int): The axis along which the DataFrames will be concatenated. 
+                        Default is 0, meaning concatenation will be done along rows.
+
+        Returns:
+            pd.DataFrame: The concatenated Pandas DataFrame.
+        """
+        if not self.dataframes:
+            raise ValueError("No DataFrames to concatenate. Add DataFrames using the add_dataframe() method.")
+        
+        return pd.concat(self.dataframes, axis=axis)
+
+# Example usage:
+df1 = pd.DataFrame({'A': [1, 2, 3], 'B': ['X', 'Y', 'Z']})
+df2 = pd.DataFrame({'A': [4, 5, 6], 'B': ['W', 'X', 'Y']})
+
+concatenator = DataFrameConcatenator()
+concatenator.add_dataframe(df1)
+concatenator.add_dataframe(df2)
+
+result = concatenator.concatenate()
+print(result)
+
+-------------- Modify met conditie dataframes
+
+import pandas as pd
+
+class DataFrameModifier:
+    def __init__(self, dataframe):
+        self.dataframe = dataframe
+
+    def modify_value(self, condition_value, target_column, new_value):
+        if 'd' not in self.dataframe['status'].values:
+            rows_to_modify = self.dataframe.index[self.dataframe['status'] != condition_value]
+            self.dataframe.loc[rows_to_modify, target_column] = new_value
+            print("Values modified successfully.")
+        else:
+            print("Values cannot be modified because 'd' exists in the status column.")
+
+# Example usage
+data = {'status': ['a', 'b', 'c', 'd', 'e'],
+        'value': [1, 2, 3, 4, 5]}
+df = pd.DataFrame(data)
+
+modifier = DataFrameModifier(df)
+print(df)
+
+modifier.modify_value('d', 'value', 10)
+print(df)
+
+modifier.modify_value('d', 'value', 20)
+print(df)
+
+
+------------------------- Subsettter Dataframe
+# Create a sample DataFrame
+data = {
+    'Name': ['John', 'Emma', 'Alex', 'Mike', 'Sophia'],
+    'Age': [25, 30, 28, 32, 27],
+    'Salary': [50000, 60000, 55000, 70000, 52000]
+}
+
+df = pd.DataFrame(data)
+
+# Create an instance of DataSubsetter
+subsetter = DataSubsetter(df)
+
+# Define a condition function to subset data (e.g., age above 28)
+def condition_func(df):
+    return df['Age'] > 28
+
+# Subset the data based on the condition function
+subsetted_data = subsetter.subset_data(condition_func)
+
+# Print the subsetted data
+print(subsetted_data)
+
+
+
+
+
+
+
+
+
+
+
