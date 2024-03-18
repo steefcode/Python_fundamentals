@@ -6,7 +6,7 @@ try:
     import matplotlib.pyplot as plt 
     import seaborn as sns
     from datetime import date, datetime
-    import datetime
+    # import datetime
     import os
 except ImportError:
      print("Als de python bibliotheken niet geimporteerd kunnen worden open dan de terminal/command prompt en kopieer onderstaande code \n" 
@@ -72,8 +72,17 @@ def optie2():
 def optie3():
     # Optie 3 toont de rapportages per inpsecteur. De gebruiker wordt gevraagd om een keuze te maken
     # Vervolgens wordt er een subset gemaakt van de Pandas Dataframe op basis van de input van de gebruiker
+    # unique_icodes = rapporten['Icode'].unique()
+    # print("Unieke inspecteurscodes:")
+    # for icode in unique_icodes:
+    #     print(icode)
+
     while True:
         try:
+            unieke_icodes = rapporten['Icode'].unique()
+            print("Unieke inspecteurscodes die voorkomen in rapporten:")
+            for icode in unieke_icodes:
+                print(icode)
             icode_keuze = int(input("Voer de inspecteurscode in om de rapportages van de desbetreffende inspecteur te zien "))
             break  
         except ValueError:
@@ -88,6 +97,10 @@ def optie4():
     # Vervolgens wordt er een subset gemaakt van de Pandas Dataframe op basis van de input van de gebruiker
     while True:
         try:
+            unieke_bcodes = rapporten['Bcode'].unique()
+            print("Unieke bedrijfscodes die voorkomen in rapporten:")
+            for bcode in unieke_bcodes:
+                print(bcode)
             bcode_keuze = int(input("Voer de bedrijfscode in om de rapportages van het desbetreffende bedrijf te zien "))
             break  
         except ValueError:
@@ -314,62 +327,106 @@ def optie10():
     return resultaten_bedrijven
 
 def optie11(): 
-    '''Gezien python zero based index heeft is het rijnummer altijd min 1'''
-    rij_index = int(input("Op welke rij wilt u een wijziging door voeren? ")) - 1
-    kolom_naam = input("Voer de kolom in waar u de wijziging wilt door voeren ")
-    waarde_wijziging = input("Voer een waarde in die u wilt wijzigen")
+    while True:
+        try:
+            rij_index = int(input("Voer in op welke regelnummer een wijziging moet plaatsvinden: ")) - 1
+            if rij_index < 0 or rij_index >= len(bedrijven):
+                raise IndexError(f"De index moet tussen 1 en {len(bedrijven)} zijn.")
+            # Proceed with the rest of your code here for processing the valid input
+            
+            # For example, you can access the row with the given index like this:
+            print("De huidige gegevens van de rij_index die u gekozen heeft")
+            print(bedrijven.iloc[rij_index])
+            
+            # Exit the loop as the input is valid
+            break
+        
+        except ValueError:
+            print("Ongeldige invoer. Voer alstublieft een getal in voor de rij_index.")
+        
+        except IndexError as e:
+            print(e) 
 
+    while True:
+        kolom_naam = input("Voer de kolom naam in waar u de wijziging wilt door voeren ")
+        kolom_naam = kolom_naam.strip().title() # Verwijderen van whitespaces en hoofdletter maken
+        if kolom_naam not in bedrijven.columns:
+            print("Ongeldige invoer. Voer een van de volgende namen in.")
+            print(bedrijven.columns) 
+        else:
+            break
+    
+    while True:
+        # variabele van datatype toekennen zodat de nieuwe invoer ook hetzelfde datatype is als het origineel
+        kolom_datatype = bedrijven[kolom_naam].dtype
+        waarde_wijziging = input(f"Voer de nieuwe waarde in voor de kolom '{kolom_naam}': ") 
+        try:
+            # Attempt to convert the input value to the same data type as kolom_naam
+            print(type(waarde_wijziging))
+            print(type(kolom_datatype))
+            print(type(bedrijven[kolom_naam].dtype))
+            waarde_wijziging = kolom_datatype(waarde_wijziging)
+            break
+        except ValueError:
+            print(f"Ongeldige invoer. Voer een waarde van het juiste type ({kolom_datatype}) in.")
+    
     '''Hier wordt de wijziging uitgevoerd '''
     bedrijven_modify = Modifier_Bedrijven(bedrijven)
     bedrijven_modify.wijzigen_bedrijf(rij_index, kolom_naam, waarde_wijziging)
     print(bedrijven)
 
 def optie12(): 
-    input_icode = input("Voer een inspecteurscode in ")
-    input_bcode = input("Voer een bedrijfscode in ")
-    input_bez_datum = input("Voer de bezoekdatum in ")
-    
-    '''Controle of de ingevoerde input wel een datum format is '''
-    while True: 
-        try: 
-            date.fromisoformat(input_bez_datum)
+    while True:
+        try:
+            input_icode = int(input("Voer een inspecteurscode in "))
             break
         except ValueError:
-            input_bez_datum = input("Geen geldige datum, vul aub een datum in met format jjjj-mm-dd ") 
+            print("Ongeldige invoer. Voer alstublieft een getal in voor de bedrijfscode.")
     
-    input_rap_datum = input("Voer de rapportage datum in ")
-
-    while True: 
-        try: 
-            date.fromisoformat(input_rap_datum)
+    while True:
+        try:
+            input_bcode = int(input("Voer een bedrijfscode in "))
             break
         except ValueError:
-            input_rap_datum = input("Geen geldige datum, vul aub een datum in met format jjjj-mm-dd ") 
+            print("Ongeldige invoer. Voer alstublieft een getal in voor de bedrijfscode.")
     
-    while input_bez_datum > input_rap_datum: 
-        print("De bezoekdatum is eerder dan de rapportage datum. vul aub beide datums nogmaals in zodat de rapportage datum later is dan de bezoekdatum")
-        input_bez_datum = input()
-        input_rap_datum = input()
-        
-        '''Gezien er wederom een ongeldige datum kan worden ingevoerd moet de date.fromisoformat() methode wederom worden toegepast '''
-        while True: 
-            try: 
-                date.fromisoformat(input_bez_datum)
-                break
-            except ValueError:
-                input_bez_datum = input("Geen geldige datum, vul aub een datum in met format jjjj-mm-dd ") 
+    while True:
+        input_bez_datum = input("Voer de bezoekdatum in (JJJJ-MM-DD): ")
+        try:
+            date_input_bez_datum  = datetime.strptime(input_bez_datum, '%Y-%m-%d').date()
+            print("De ingevoerde datum is:", date_input_bez_datum)
+            break
+        except ValueError:
+            print("De invoer is geen geldige datum (formaat: JJJJ-MM-DD)")
     
-        while True: 
-            try: 
-                date.fromisoformat(input_rap_datum)
-                break
-            except ValueError:
-                input_rap_datum = input("Geen geldige datum, vul aub een datum in met format jjjj-mm-dd ") 
+    while True:
+        try:
+            input_rap_datum = input("Voer de bezoekdatum in (JJJJ-MM-DD): ")
+            date_input_rap_datum = datetime.strptime(input_rap_datum, '%Y-%m-%d').date()
+            print("De ingevoerde datum is:", date_input_rap_datum)
+            if date_input_rap_datum <= date_input_bez_datum:
+                print("De rapportagedatum moet na de bezoekdatum liggen.")
+                continue 
+            break
+        except ValueError:
+         print("De invoer is geen geldige datum (formaat: JJJJ-MM-DD)")
 
-    input_status = input("Voer de status in van het rapport ")
-    input_opm = input("Voer een opmerking in voor het rapport ")
-
-
+    while True:
+        input_status = input("Voer de status in van het rapport: ").strip().lower()  # verwijder whitespace en maak kleine letter
+        if input_status in {'v', 'd'}:
+            break  # check of input 'v' of 'd' is. Dan wordt de loop verlaten. 
+        elif input_status.isdigit():
+            print("Fout: Het ingevoerde status is een getal. Voer 'v' voor voltooid of 'd' voor in behandeling.")
+        else:
+            print("Fout: Ongeldige invoer. Voer 'v' voor voltooid of 'd' voor in behandeling.")
+    
+    while True:
+        input_opm = input("Voer een opmerking in voor het rapport ")
+        if input_opm.strip().isalpha():
+            break
+        else:
+            print("Ongeldige invoer. De bedrijfsnaam mag alleen letters bevatten.")
+    
     '''Kopie maken van bedrijven dataframe zodat de nieuwe regels eraan kan worden toegvoegd'''
     rapport_regel = rapporten.copy(deep=True).head(0)
 
