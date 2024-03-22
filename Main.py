@@ -33,12 +33,27 @@ from Class_PandasExport import PandasExporter
 
 # Toewijzen datasets aan variabelen
 bedrijven_reader = BedrijvenDataReader()
-bedrijven = bedrijven_reader.lees_bedrijven_data()
+try:
+    bedrijven = bedrijven_reader.lees_bedrijven_data()
+except FileNotFoundError:
+    print('Bestand bedrijven bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
+
 reader_rapporten = RapportenDataReader()
-rapporten = reader_rapporten.lees_rapporten_data()
+try:
+    rapporten = reader_rapporten.lees_rapporten_data()
+except FileNotFoundError:
+    print('Bestand rapporten bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
+
 gassen_reader = Gassen("gassen.csv")
-gassen = gassen_reader.lees_gassen()
-inspecteurs = Inspecteurs.lees_inspecteurs() 
+try:
+    gassen = gassen_reader.lees_gassen()
+except FileNotFoundError:
+    print('Bestand gassen bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
+
+try:
+    inspecteurs = Inspecteurs.lees_inspecteurs()
+except FileNotFoundError:
+    print('Bestand inspecteurs bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
 
 def tonen_menu():
     print("=== Welkom in het menu, maak een keuze ===") 
@@ -360,20 +375,19 @@ def optie11():
         # variabele van datatype toekennen zodat de nieuwe invoer ook hetzelfde datatype is als het origineel
         kolom_datatype = bedrijven[kolom_naam].dtype
         waarde_wijziging = input(f"Voer de nieuwe waarde in voor de kolom '{kolom_naam}': ") 
+        df_waarde_wijziging = pd.DataFrame({kolom_naam: [waarde_wijziging]})
         try:
             # Attempt to convert the input value to the same data type as kolom_naam
-            print(type(waarde_wijziging))
-            print(type(kolom_datatype))
-            print(type(bedrijven[kolom_naam].dtype))
-            waarde_wijziging = kolom_datatype(waarde_wijziging)
+            bedrijven[kolom_naam].dtype == df_waarde_wijziging[kolom_naam].dtype
             break
         except ValueError:
             print(f"Ongeldige invoer. Voer een waarde van het juiste type ({kolom_datatype}) in.")
     
     '''Hier wordt de wijziging uitgevoerd '''
     bedrijven_modify = Modifier_Bedrijven(bedrijven)
-    bedrijven_modify.wijzigen_bedrijf(rij_index, kolom_naam, waarde_wijziging)
-    print(bedrijven)
+    resultaten_bedrijf_modify = bedrijven_modify.wijzigen_bedrijf(rij_index, kolom_naam, waarde_wijziging)
+    
+    return resultaten_bedrijf_modify
 
 def optie12(): 
     while True:
@@ -442,7 +456,10 @@ def optie12():
     concatenator.add_dataframe(rapport_regel)
 
     resultaten = concatenator.concatenate()
-    return resultaten
+    
+    resultaten_rapporten = resultaten
+
+    return resultaten_rapporten
 
 def optie13():
     '''Gezien python zero based index heeft is het rijnummer altijd min 1'''
@@ -484,8 +501,7 @@ while True:
         bedrijven= optie10()
     elif keuze == "11": 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
-        bedrijven_wijzigen = optie11()
-        bedrijven = bedrijven_wijzigen 
+        bedrijven= optie11()
     elif keuze == "12":
         optie12() 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
