@@ -1,5 +1,6 @@
-Lib/site-packages/
-Scripts
-.ipynb_checkpoints
-__pyache__
-share\man\man1
+# Python virtual environment
+venv/
+env/
+*.pyc
+*.pyo
+__pycache__/
