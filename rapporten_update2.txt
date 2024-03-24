@@ -1,0 +1,16 @@
+Icode	Bcode	Bezdat	Rapdat	Status	Opm
+001	0001	2019-03-01	2019-04-01	d	alles in orde
+003	0001	2020-03-03	2020-04-06	d	geen bijzonderheden
+002	0004	2020-03-06	2020-07-07	d	geen bijzonderheden
+001	0003	2020-05-02	2020-06-06	d	gevaarlijk hoge uitstoot
+003	0004	2020-08-30	2020-09-20	d	alles in orde
+005	0003	2020-09-01	2020-10-27	d	geen bijzonderheden
+004	0003	2021-01-02	2021-01-12	d	gasfilters verouderd
+002	0001	2021-03-02	2021-04-04	v	onveilige raffinaderij apparatuur
+005	0004	2021-03-08			
+002	0003	2021-05-04	2021-06-06	d	geen bijzonderheden
+001	0003	2021-09-03	2021-09-12	v	alles in orde
+003	0004	2021-09-05	2021-11-11	v	geen bijzonderheden
+004	0003	2022-01-04			
+005	0004	2022-03-01			
+002	0001	2022-02-02			

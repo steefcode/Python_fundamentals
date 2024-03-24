@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import uuid
 
 class Boetes:
     def __init__(self, bedrijven, gassen):
@@ -35,28 +36,62 @@ class Boetes:
                 self.bedrijven_gassen["omgevingsuitstoot"]
             )
 
+        # Aanmaken van groepen die horen bij de omgevingsuitstoot van de bedrijven. 
+        self.bedrijven_gassen["UUID"] = ""
+
+        for index, bedrijf in self.bedrijven.iterrows():
+            x = bedrijf["Xwaarde"]
+            y = bedrijf["Ywaarde"]
+
+        # Aanmaken van unieke identiefier per groep om zo te aggregeren naar gemiddelde omgevingsuitstoot.   
+            uuid_value = str(uuid.uuid4())
+            mask = (self.bedrijven_gassen["x-waarde"].between(x - 2, x + 2)) & \
+                        (self.bedrijven_gassen["y-waarde"].between(y - 2, y + 2))
+    
+            self.bedrijven_gassen.loc[mask, "UUID"] = uuid_value
+
+        # Gemiddelde omgevingsuitstoot per UUID om een gewogen gemiddelde te berekenen. 
+        uitstoot_per_uuid = self.bedrijven_gassen.groupby("UUID")["omgevingsuitstoot"].mean()
+
+        bedrijven_omgevingsuitstoot = pd.merge(self.bedrijven_gassen, 
+                                               uitstoot_per_uuid, 
+                                               left_on=["UUID"],
+                                               right_on = ["UUID"],
+                                               how = 'left', 
+                                               indicator=True) 
+        
+        bedrijven_omgevingsuitstoot = bedrijven_omgevingsuitstoot.drop(['CO2', 'CH4', 'NO2', 'NH3','UUID',  
+                                                                        'omgevingsuitstoot_x', '_merge'], axis=1)
+        bedrijven_omgevingsuitstoot = bedrijven_omgevingsuitstoot.rename(columns={'omgevingsuitstoot_y': 'omgevingsuitstoot'})
+        print(bedrijven_omgevingsuitstoot)
+        
+        # Test met print
+        #print(self.bedrijven_gassen.head(100))
+        #print(self.bedrijven_gassen.loc[self.bedrijven_gassen['x-waarde'] == 2])
+        #print(self.bedrijven_gassen.loc[self.bedrijven_gassen['y-waarde'] == 2])
+        # test_df = self.bedrijven_gassen.loc[self.bedrijven_gassen['omgevingsuitstoot'] > 0.0] 
+        # print(test_df)
+         
         # Merge de bestanden samen op basis van x en y coordinaten om zo de omgevingsuitstoot per bedrijf te krijgen. 
         boete = pd.merge(
             self.bedrijven,
-            self.bedrijven_gassen,
+            bedrijven_omgevingsuitstoot,
             left_on=['Xwaarde', 'Ywaarde'],
             right_on=['x-waarde', 'y-waarde'],
             how='left',
             indicator=True
         )
-        boete = boete.drop(['x-waarde', 'y-waarde', 'CO2', 'CH4', 'NO2', 'NH3', '_merge'], axis=1)
+        boete = boete.drop(['x-waarde', 'y-waarde','_merge'], axis=1)
+        # Test met print
+        # print(boete)
 
-        # Bereken de Beruitst op basis van omgevingsuitstoot gemiddelde 
-        boete['Beruitst'] = boete['tot_uitstoot'] + (boete['omgevingsuitstoot'] / 25)
-        boete['Berekening_boete'] = boete["Maxuitst"] - boete['Beruitst']
+        # Bereken de Beruitst op basis van omgevingsuitstoot gemiddelde  
+        boete['Beruitst'] = boete['omgevingsuitstoot']
+        boete['Berekening_eenheden'] = (boete["Maxuitst"] - boete['Beruitst']) * 1000
 
         # Bereken de boete als de maximale boete overschreven is, per eenheide maal 1000
-        boete["Boete"] = np.where(boete['Berekening_boete'] < 0, boete["Berekening_boete"] * -1000, boete["Boete"])
-        boete = boete.drop(["Berekening_boete"], axis=1)
-
+        boete["Boete"] = np.where(boete['Berekening_eenheden'] < 0, boete["Berekening_eenheden"] * -1000, boete["Berekening_eenheden"])
+        # boete = boete.drop(["Berekening_eenheden"], axis=1) 
+        
         return boete
 
-# Example usage:
-# bedrijven_gassen_calculator = Boetes(bedrijven, gassen)
-# result_boete = bedrijven_gassen_calculator.calculate_boete()
-# print(result_boete)

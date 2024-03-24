@@ -3,33 +3,42 @@ try:
     import pandas as pd 
     import numpy as np 
     from tabulate import tabulate   
-    import matplotlib.pyplot as plt 
+    import PyQt5
+    import matplotlib
+    matplotlib.use('Qt5Agg')  # Gebruik Qt5Agg backend
+    import matplotlib.pyplot as plt
     import seaborn as sns
     from datetime import date, datetime
     # import datetime
     import os
+    import uuid
 except ImportError:
      print("Als de python bibliotheken niet geimporteerd kunnen worden open dan de terminal/command prompt en kopieer onderstaande code \n" 
            "pip install -r requirements.txt")
 
 # Beperking om aantal kolommen zichtbaar te maken teniet doen
 pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', 100)
 
 # Importeer modules 
-from Class_gassen_update import Gassen 
-from Class_lees_bedrijven_update import BedrijvenDataReader 
-from Class_lees_rapporten_update import RapportenDataReader 
-from Class_inspecteurs import Inspecteurs 
-from Class_Subset_Rapporten import Subset_Rapporten 
-from Class_Heatmap_Gassen import HeatmapGassen 
-from Class_Boetes import Boetes 
-from Class_analyse import AntiJoinAndSort 
-from Class_Subset_Coordinaten_update import Subsetcoordinaten_update
-from Class_Subset_Bedrijfsnaam import Subset_Bedrijfsnaam 
-from Class_Concatenator import DataFrameConcatenator 
-from Class_Modifier_Bedrijven import Modifier_Bedrijven 
-from Class_Modifier_Rapport import Modifier_Rapport
-from Class_PandasExport import PandasExporter
+try:
+    from Class_gassen_update import Gassen 
+    from Class_lees_bedrijven_update import BedrijvenDataReader 
+    from Class_lees_rapporten_update import RapportenDataReader 
+    from Class_lees_inspecteurs import InspecteursDataReader 
+    from Class_Subset_Rapporten import Subset_Rapporten 
+    from Class_Heatmap_Gassen import HeatmapGassen 
+    from Class_Boetes import Boetes 
+    from Class_analyse import AntiJoinAndSort 
+    from Class_Subset_Coordinaten_update import Subsetcoordinaten_update
+    from Class_Subset_Bedrijfsnaam import Subset_Bedrijfsnaam 
+    from Class_Concatenator import DataFrameConcatenator 
+    from Class_Modifier_Bedrijven import Modifier_Bedrijven 
+    from Class_Modifier_Rapport import Modifier_Rapport
+    from Class_PandasExport import PandasExporter
+except ImportError:
+    print("Zorg dat de handgemaakte modules allemaal in de map zitten waarin ook de data bestanden staan. /n"
+          "Probeer daarna het programma weer te draaien.")
 
 # Toewijzen datasets aan variabelen
 bedrijven_reader = BedrijvenDataReader()
@@ -50,10 +59,16 @@ try:
 except FileNotFoundError:
     print('Bestand gassen bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
 
+reader_inspecteurs = InspecteursDataReader()
 try:
-    inspecteurs = Inspecteurs.lees_inspecteurs()
+    inspecteurs = reader_inspecteurs.lees_inspecteurs()
 except FileNotFoundError:
     print('Bestand inspecteurs bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
+
+print(rapporten)
+print(rapporten.dtypes)
+print(bedrijven)
+print(bedrijven.dtypes)
 
 def tonen_menu():
     print("=== Welkom in het menu, maak een keuze ===") 
@@ -98,8 +113,12 @@ def optie3():
             print("Unieke inspecteurscodes die voorkomen in rapporten:")
             for icode in unieke_icodes:
                 print(icode)
-            icode_keuze = int(input("Voer de inspecteurscode in om de rapportages van de desbetreffende inspecteur te zien "))
-            break  
+            icode_keuze = input("Voer de inspecteurscode in om de rapportages van de desbetreffende inspecteur te zien ")
+            icode_keuze = icode_keuze.strip()
+            if icode_keuze in unieke_icodes:
+                break
+            else:
+                print("De ingevoerde inspecteurscode komt niet voor in de lijst.")  
         except ValueError:
             print("Ongeldige invoer. Voer een inspecteurscode in.") 
 
@@ -116,8 +135,12 @@ def optie4():
             print("Unieke bedrijfscodes die voorkomen in rapporten:")
             for bcode in unieke_bcodes:
                 print(bcode)
-            bcode_keuze = int(input("Voer de bedrijfscode in om de rapportages van het desbetreffende bedrijf te zien "))
-            break  
+            bcode_keuze = input("Voer de bedrijfscode in om de rapportages van het desbetreffende bedrijf te zien ")
+            bcode_keuze = bcode_keuze.strip()
+            if bcode_keuze in unieke_bcodes:
+                break  
+            else:
+                print("De ingevoerde bedrijfsscode komt niet voor in de lijst.")
         except ValueError:
             print("Ongeldige invoer. Voer een bedrijfscode in.") 
 
@@ -212,13 +235,13 @@ def optie9():
     print(resultaten)
 
 def optie10():
-    # Valideer input voor bedrijfscode
+    # Valideer input voor bedrijfscode, startend met een 0 gevolgd door een getal. 
     while True:
-        try:
-            input_code = int(input("Voer een bedrijfscode in "))
+        input_code = input("Voer een bedrijfscode in: ")
+        if input_code.strip().isdigit() and input_code.startswith('0'):
             break
-        except ValueError:
-            print("Ongeldige invoer. Voer alstublieft een getal in voor de bedrijfscode.")
+        else:
+            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal.")
 
     # Valideer input voor bedrijfsnaam
     while True:
@@ -462,15 +485,52 @@ def optie12():
     return resultaten_rapporten
 
 def optie13():
-    '''Gezien python zero based index heeft is het rijnummer altijd min 1'''
-    rij_index = int(input("Op welke rij wilt u een wijziging door voeren? ")) - 1
-    kolom_naam = input("Voer de kolom in waar u de wijziging wilt door voeren ")
-    waarde_wijziging = input("Voer een waarde in die u wilt wijzigen")
 
-    modifier = Modifier_Rapport(rapporten)
+    while True:
+        try:
+            rij_index = int(input("Voer in op welke regelnummer een wijziging moet plaatsvinden: ")) - 1
+            if rij_index < 0 or rij_index >= len(rapporten):
+                raise IndexError(f"De index moet tussen 1 en {len(rapporten)} zijn.")
+            
+            # print de regel informatie die de gebruiker gekozen heeft
+            print("De huidige gegevens van de rij_index die u gekozen heeft")
+            print(rapporten.iloc[rij_index])
+            
+            # sluit de loop als er een geldige waarde is
+            break
+        
+        except ValueError:
+            print("Ongeldige invoer. Voer alstublieft een getal in voor de rij_index.")
+        
+        except IndexError as e:
+            print(e) 
 
-    modifier.wijzigen_rapport(rij_index, kolom_naam, waarde_wijziging)
-    print(rapporten)
+    while True:
+        kolom_naam = input("Voer de kolom naam in waar u de wijziging wilt door voeren ")
+        kolom_naam = kolom_naam.strip().title() # Verwijderen van whitespaces en hoofdletter maken
+        if kolom_naam not in rapporten.columns:
+            print("Ongeldige invoer. Voer een van de volgende namen in.")
+            print(rapporten.columns) 
+        else:
+            break
+    
+    while True:
+        # variabele van datatype toekennen zodat de nieuwe invoer ook hetzelfde datatype is als het origineel
+        kolom_datatype = rapporten[kolom_naam].dtype
+        waarde_wijziging = input(f"Voer de nieuwe waarde in voor de kolom '{kolom_naam}': ") 
+        df_waarde_wijziging = pd.DataFrame({kolom_naam: [waarde_wijziging]})
+        try:
+            # Attempt to convert the input value to the same data type as kolom_naam
+            bedrijven[kolom_naam].dtype == df_waarde_wijziging[kolom_naam].dtype
+            break
+        except ValueError:
+            print(f"Ongeldige invoer. Voer een waarde van het juiste type ({kolom_datatype}) in.")
+    
+    '''Hier wordt de wijziging uitgevoerd '''
+    rapporten_modify = Modifier_Rapport(rapporten)
+    resultaten_rapporten_modify = rapporten_modify.wijzigen_rapport(rij_index, kolom_naam, waarde_wijziging)
+    
+    return resultaten_rapporten_modify
 
 # Menu keuzes en de daarbij behorende functies 
 
@@ -514,9 +574,9 @@ while True:
         '''Als het programma stopt worden de wijzigingen en toevoegingen opgeslagen'''
         '''Gezien het format afwijkt van de daadwerkelijke txt bestanden wordt er een _update toegevoegd aan de bestanden'''
         export_bedrijven = PandasExporter(bedrijven)
-        export_bedrijven.export_to_txt('bedrijven_update.txt')
-        export_rapporten = PandasExporter(rapporten)
-        export_rapporten.export_to_txt('rapporten_update.txt')
+        export_bedrijven.export_to_txt('bedrijven_update2.txt')
+        #export_rapporten = PandasExporter(rapporten)
+        #export_rapporten.export_to_txt('rapporten_update2.txt')
         print("Het programma wordt afgesloten. De gewijzigde gegevens worden opgeslagen")
         break
     else:
