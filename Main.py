@@ -65,10 +65,10 @@ try:
 except FileNotFoundError:
     print('Bestand inspecteurs bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
 
-print(rapporten)
-print(rapporten.dtypes)
-print(bedrijven)
-print(bedrijven.dtypes)
+# Test met printen van originele bestanden tov update bestanden
+# print(rapporten)
+# print(type(rapporten))
+# print(rapporten.dtypes)
 
 def tonen_menu():
     print("=== Welkom in het menu, maak een keuze ===") 
@@ -156,7 +156,7 @@ def optie5():
         input_gas = input("Voer naam van het gas in waar u een heatmap van wilt zien ")
         input_gas = input_gas.replace(" ", "") # Verwijderen van whitespaces
         if input_gas not in gassen.columns:
-            print("Ongeldige invoer. Voer CO2, CH4, NO2, NH3 of tot_uitstoot in.")
+            print("Ongeldige invoer. Voer CO2, CH4, NO2, NH3 of tot_uitstoot in. Let op de input is hoofdletter gevoelig")
         else:
             break
     
@@ -179,7 +179,7 @@ def optie7():
                                 "vervuiler per gekozen gas ")
         input_gas_sort = input_gas_sort.replace(" ", "") # Verwijderen van whitespaces
         if input_gas_sort.strip() not in gassen.columns:
-            print("Ongeldige invoer. Voer CO2, CH4, NO2, NH3 of tot_uitstoot in.")
+            print("Ongeldige invoer. Voer CO2, CH4, NO2, NH3 of tot_uitstoot in. Let op de input is hoofdletter gevoelig")
         else:
             break
 
@@ -318,7 +318,7 @@ def optie10():
             print("Ongeldige invoer. Voer 'j' in als er een controle heeft plaatsgevonden, 'n' anders.")
 
     # Valideer input voor frequentie
-    while True:
+    while True: 
         try:
             input_frequentie = float(input("Voer het aantal bezoeken in dat heeft plaatsgevonden "))
             if input_frequentie in range(0,13):
@@ -414,18 +414,18 @@ def optie11():
 
 def optie12(): 
     while True:
-        try:
-            input_icode = int(input("Voer een inspecteurscode in "))
+        input_icode = input("Voer een inspecteurscode in: ")
+        if input_icode.strip().isdigit() and input_icode.startswith('0'):
             break
-        except ValueError:
-            print("Ongeldige invoer. Voer alstublieft een getal in voor de bedrijfscode.")
-    
+        else:
+            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal.")
+
     while True:
-        try:
-            input_bcode = int(input("Voer een bedrijfscode in "))
+        input_bcode = input("Voer een bedrijfscode in: ")
+        if input_bcode.strip().isdigit() and input_bcode.startswith('0'):
             break
-        except ValueError:
-            print("Ongeldige invoer. Voer alstublieft een getal in voor de bedrijfscode.")
+        else:
+            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal.")
     
     while True:
         input_bez_datum = input("Voer de bezoekdatum in (JJJJ-MM-DD): ")
@@ -485,7 +485,6 @@ def optie12():
     return resultaten_rapporten
 
 def optie13():
-
     while True:
         try:
             rij_index = int(input("Voer in op welke regelnummer een wijziging moet plaatsvinden: ")) - 1
@@ -521,7 +520,7 @@ def optie13():
         df_waarde_wijziging = pd.DataFrame({kolom_naam: [waarde_wijziging]})
         try:
             # Attempt to convert the input value to the same data type as kolom_naam
-            bedrijven[kolom_naam].dtype == df_waarde_wijziging[kolom_naam].dtype
+            rapporten[kolom_naam].dtype == df_waarde_wijziging[kolom_naam].dtype
             break
         except ValueError:
             print(f"Ongeldige invoer. Voer een waarde van het juiste type ({kolom_datatype}) in.")
@@ -558,25 +557,27 @@ while True:
         optie9()
     elif keuze == "10":
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
-        bedrijven= optie10()
+        bedrijven = optie10()
+        print(bedrijven)
     elif keuze == "11": 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         bedrijven= optie11()
+        print(bedrijven)
     elif keuze == "12":
-        optie12() 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         rapporten = optie12()
+        print(rapporten)
     elif keuze == "13": 
-        optie13()
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         rapporten = optie13()
+        print(rapporten)
     elif keuze == '14':
         '''Als het programma stopt worden de wijzigingen en toevoegingen opgeslagen'''
         '''Gezien het format afwijkt van de daadwerkelijke txt bestanden wordt er een _update toegevoegd aan de bestanden'''
         export_bedrijven = PandasExporter(bedrijven)
         export_bedrijven.export_to_txt('bedrijven_update2.txt')
-        #export_rapporten = PandasExporter(rapporten)
-        #export_rapporten.export_to_txt('rapporten_update2.txt')
+        export_rapporten = PandasExporter(rapporten)
+        export_rapporten.export_to_txt('rapporten_update2.txt')
         print("Het programma wordt afgesloten. De gewijzigde gegevens worden opgeslagen")
         break
     else:
