@@ -109,7 +109,7 @@ def optie3():
 
     while True:
         try:
-            unieke_icodes = rapporten['Icode'].unique()
+            unieke_icodes = np.sort(rapporten['Icode'].unique())
             print("Unieke inspecteurscodes die voorkomen in rapporten:")
             for icode in unieke_icodes:
                 print(icode)
@@ -131,7 +131,7 @@ def optie4():
     # Vervolgens wordt er een subset gemaakt van de Pandas Dataframe op basis van de input van de gebruiker
     while True:
         try:
-            unieke_bcodes = rapporten['Bcode'].unique()
+            unieke_bcodes = np.sort(rapporten['Bcode'].unique())
             print("Unieke bedrijfscodes die voorkomen in rapporten:")
             for bcode in unieke_bcodes:
                 print(bcode)
