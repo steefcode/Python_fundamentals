@@ -97,7 +97,8 @@ def optie1():
 
 def optie2():
     # Optie 2 toont de bedrijven
-    print(bedrijven)
+    clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
+    print(clean_bedrijven)
 
 def optie3():
     # Optie 3 toont de rapportages per inpsecteur. De gebruiker wordt gevraagd om een keuze te maken
@@ -558,26 +559,30 @@ while True:
     elif keuze == "10":
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         bedrijven = optie10()
-        print(bedrijven)
+        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
+        print(clean_bedrijven)
     elif keuze == "11": 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         bedrijven= optie11()
-        print(bedrijven)
+        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
+        print(clean_bedrijven)
     elif keuze == "12":
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         rapporten = optie12()
-        print(rapporten)
+        clean_rapporten = rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['iCode'])
+        print(clean_rapporten)
     elif keuze == "13": 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         rapporten = optie13()
-        print(rapporten)
+        clean_rapporten = rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['iCode'])
+        print(clean_rapporten)
     elif keuze == '14':
         '''Als het programma stopt worden de wijzigingen en toevoegingen opgeslagen'''
         '''Gezien het format afwijkt van de daadwerkelijke txt bestanden wordt er een _update toegevoegd aan de bestanden'''
         export_bedrijven = PandasExporter(bedrijven)
-        export_bedrijven.export_to_txt('bedrijven_update2.txt')
+        export_bedrijven.export_to_txt('bedrijven.txt')
         export_rapporten = PandasExporter(rapporten)
-        export_rapporten.export_to_txt('rapporten_update2.txt')
+        export_rapporten.export_to_txt('rapporten.txt')
         print("Het programma wordt afgesloten. De gewijzigde gegevens worden opgeslagen")
         break
     else:
