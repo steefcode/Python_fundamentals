@@ -239,10 +239,10 @@ def optie10():
     # Valideer input voor bedrijfscode, startend met een 0 gevolgd door een getal. 
     while True:
         input_code = input("Voer een bedrijfscode in: ")
-        if input_code.strip().isdigit() and input_code.startswith('0'):
+        if input_code.strip().isdigit() and input_code.startswith('0') and len(input_code) == 4:
             break
         else:
-            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal.")
+            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal en wat bestaat uit 4 cijfers.")
 
     # Valideer input voor bedrijfsnaam
     while True:
@@ -416,17 +416,18 @@ def optie11():
 def optie12(): 
     while True:
         input_icode = input("Voer een inspecteurscode in: ")
-        if input_icode.strip().isdigit() and input_icode.startswith('0'):
+        input_icode = input_icode.strip()
+        if input_icode.isdigit() and input_icode.startswith('0') and len(input_icode) == 3:
             break
         else:
-            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal.")
+            print("Ongeldige invoer. Voer alstublieft een code in die begint met een 0 en bestaat uit drie cijfers.")
 
     while True:
         input_bcode = input("Voer een bedrijfscode in: ")
-        if input_bcode.strip().isdigit() and input_bcode.startswith('0'):
+        if input_bcode.strip().isdigit() and input_bcode.startswith('0') and len(input_bcode) == 4:
             break
         else:
-            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal.")
+            print("Ongeldige invoer. Voer alstublieft een 0 in volgend met een getal en bestaat uit 4 cijfers.")
     
     while True:
         input_bez_datum = input("Voer de bezoekdatum in (JJJJ-MM-DD): ")
@@ -439,7 +440,7 @@ def optie12():
     
     while True:
         try:
-            input_rap_datum = input("Voer de bezoekdatum in (JJJJ-MM-DD): ")
+            input_rap_datum = input("Voer de rapportagedatum in (JJJJ-MM-DD): ")
             date_input_rap_datum = datetime.strptime(input_rap_datum, '%Y-%m-%d').date()
             print("De ingevoerde datum is:", date_input_rap_datum)
             if date_input_rap_datum <= date_input_bez_datum:
@@ -559,22 +560,22 @@ while True:
     elif keuze == "10":
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         bedrijven = optie10()
-        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
+        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code']).reset_index(drop=True)
         print(clean_bedrijven)
     elif keuze == "11": 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         bedrijven= optie11()
-        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
+        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code']).reset_index(drop=True)
         print(clean_bedrijven)
     elif keuze == "12":
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         rapporten = optie12()
-        clean_rapporten = rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['iCode'])
+        clean_rapporten = rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['Icode']).reset_index(drop=True)
         print(clean_rapporten)
     elif keuze == "13": 
         '''Gezien er wijzigingen plaats vinden wordt de variabele overschreven'''
         rapporten = optie13()
-        clean_rapporten = rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['iCode'])
+        clean_rapporten = rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['Icode']).reset_index(drop=True)
         print(clean_rapporten)
     elif keuze == '14':
         '''Als het programma stopt worden de wijzigingen en toevoegingen opgeslagen'''

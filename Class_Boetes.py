@@ -63,7 +63,7 @@ class Boetes:
         bedrijven_omgevingsuitstoot = bedrijven_omgevingsuitstoot.drop(['CO2', 'CH4', 'NO2', 'NH3','UUID',  
                                                                         'omgevingsuitstoot_x', '_merge'], axis=1)
         bedrijven_omgevingsuitstoot = bedrijven_omgevingsuitstoot.rename(columns={'omgevingsuitstoot_y': 'omgevingsuitstoot'})
-        print(bedrijven_omgevingsuitstoot)
+        # print(bedrijven_omgevingsuitstoot)
         
         # Test met print
         #print(self.bedrijven_gassen.head(100))
@@ -83,15 +83,15 @@ class Boetes:
         )
         boete = boete.drop(['x-waarde', 'y-waarde','_merge'], axis=1)
         # Test met print
-        # print(boete)
-
+        # print(boete)'
+       
         # Bereken de Beruitst op basis van omgevingsuitstoot gemiddelde  
         boete['Beruitst'] = boete['omgevingsuitstoot']
         boete['Berekening_eenheden'] = (boete["Maxuitst"] - boete['Beruitst']) * 1000
 
         # Bereken de boete als de maximale boete overschreven is, per eenheide maal 1000
         boete["Boete"] = np.where(boete['Berekening_eenheden'] < 0, boete["Berekening_eenheden"] * -1000, boete["Berekening_eenheden"])
-        # boete = boete.drop(["Berekening_eenheden"], axis=1) 
+        boete = boete.drop(['tot_uitstoot', 'omgevingsuitstoot', 'Berekening_eenheden'], axis=1) 
         
         return boete
 
