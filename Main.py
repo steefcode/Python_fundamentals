@@ -167,7 +167,7 @@ def optie5():
 def optie6():
     bedrijven_gassen_calculator = Boetes(bedrijven, gassen)
     result_boete = bedrijven_gassen_calculator.calculate_boete()
-    print(result_boete) 
+    print(type(result_boete)) 
 
 def optie7():
     # Optie 7 maakt een anti-join op de datasets van gassen en bedrijven
@@ -550,7 +550,13 @@ while True:
     elif keuze == "5":
         optie5()
     elif keuze == "6":
-        optie6()
+        x = optie6()
+        print(x)
+        print(type(x))
+        # print(type(bedrijven))
+        # clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
+        # clean_bedrijven = bedrijven.replace(np.nan, '', regex=True, inplace=True)
+        # print(type(clean_bedrijven))
     elif keuze == "7":
         optie7()
     elif keuze == "8":
