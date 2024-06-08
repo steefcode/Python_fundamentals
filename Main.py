@@ -9,8 +9,7 @@ try:
     import matplotlib.pyplot as plt
     import seaborn as sns
     from datetime import date, datetime
-    # import datetime
-    import os
+    # import os
     import uuid
 except ImportError:
      print("Als de python bibliotheken niet geimporteerd kunnen worden open dan de terminal/command prompt en kopieer onderstaande code \n" 
@@ -64,11 +63,6 @@ try:
     inspecteurs = reader_inspecteurs.lees_inspecteurs()
 except FileNotFoundError:
     print('Bestand inspecteurs bestaat niet in de map, plaats deze er in om verder te kunnen met het programma')
-
-# Test met printen van originele bestanden tov update bestanden
-# print(rapporten)
-# print(type(rapporten))
-# print(rapporten.dtypes)
 
 def tonen_menu():
     print("=== Welkom in het menu, maak een keuze ===") 
@@ -167,7 +161,7 @@ def optie5():
 def optie6():
     bedrijven_gassen_calculator = Boetes(bedrijven, gassen)
     result_boete = bedrijven_gassen_calculator.calculate_boete()
-    print(type(result_boete)) 
+    return result_boete
 
 def optie7():
     # Optie 7 maakt een anti-join op de datasets van gassen en bedrijven
@@ -209,7 +203,7 @@ def optie8():
         except ValueError:
             print("Ongeldige invoer. Voer alstublieft een getal.")
 
-    # Create an instance of the DataSubset class
+    # Toewijzen om verschil in x en y coordinaten weer te geven. 
     diff_subset_coordinaten = Subsetcoordinaten_update(bedrijven)
 
     resultaten = diff_subset_coordinaten.verschil_coordinaten_update(input_x, input_y)
@@ -371,13 +365,10 @@ def optie11():
             rij_index = int(input("Voer in op welke regelnummer een wijziging moet plaatsvinden: ")) - 1
             if rij_index < 0 or rij_index >= len(bedrijven):
                 raise IndexError(f"De index moet tussen 1 en {len(bedrijven)} zijn.")
-            # Proceed with the rest of your code here for processing the valid input
             
-            # For example, you can access the row with the given index like this:
             print("De huidige gegevens van de rij_index die u gekozen heeft")
             print(bedrijven.iloc[rij_index])
             
-            # Exit the loop as the input is valid
             break
         
         except ValueError:
@@ -401,7 +392,7 @@ def optie11():
         waarde_wijziging = input(f"Voer de nieuwe waarde in voor de kolom '{kolom_naam}': ") 
         df_waarde_wijziging = pd.DataFrame({kolom_naam: [waarde_wijziging]})
         try:
-            # Attempt to convert the input value to the same data type as kolom_naam
+            # Checken of input matcht met datatype van bestaande kolom.
             bedrijven[kolom_naam].dtype == df_waarde_wijziging[kolom_naam].dtype
             break
         except ValueError:
@@ -521,7 +512,7 @@ def optie13():
         waarde_wijziging = input(f"Voer de nieuwe waarde in voor de kolom '{kolom_naam}': ") 
         df_waarde_wijziging = pd.DataFrame({kolom_naam: [waarde_wijziging]})
         try:
-            # Attempt to convert the input value to the same data type as kolom_naam
+            # Checken of input matcht met datatype van bestaande kolom. 
             rapporten[kolom_naam].dtype == df_waarde_wijziging[kolom_naam].dtype
             break
         except ValueError:
@@ -550,13 +541,9 @@ while True:
     elif keuze == "5":
         optie5()
     elif keuze == "6":
-        x = optie6()
-        print(x)
-        print(type(x))
-        # print(type(bedrijven))
-        # clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code'])
-        # clean_bedrijven = bedrijven.replace(np.nan, '', regex=True, inplace=True)
-        # print(type(clean_bedrijven))
+        bedrijven = optie6()
+        clean_bedrijven = bedrijven.fillna('').astype(str).replace('NaT', '').sort_values(by=['Code']).reset_index(drop=True)
+        print(clean_bedrijven)
     elif keuze == "7":
         optie7()
     elif keuze == "8":

@@ -24,8 +24,3 @@ class Gassen:
         gassen["tot_uitstoot"] = (1 * gassen["CO2"]) + (25 * gassen["CH4"]) + (5 * gassen["NO2"]) + (1000 * gassen["NH3"])
         return gassen
 
-# Usage
-# gassen_instance = Gassen("gassen.csv")
-# data = gassen_instance.lees_gassen()
-# print(data) 
-# 

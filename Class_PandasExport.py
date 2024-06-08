@@ -3,34 +3,29 @@ import pandas as pd
 
 class PandasExporter:
     """
-    A class to export Pandas DataFrame to tab-separated text files.
+    Een Class om de pandas dataframes te exporteren naar een txt file .
     """
     def __init__(self, dataframe):
         """
-        Initialize PandasExporter with a DataFrame object.
-        
-        Parameters:
-        dataframe (DataFrame): The DataFrame to export.
+        Checken of het object een pandas dataframe is.
         """
         if not isinstance(dataframe, pd.DataFrame):
-            raise ValueError("Input must be a Pandas DataFrame")
+            raise ValueError("Input moet een pandas dataframe zijn.")
         self.dataframe = dataframe
 
     def export_to_txt(self, file_name=None):
         """
-        Export DataFrame to a tab-separated text file.
-        
-        Parameters:
-        file_name (str): The name of the output text file. If not provided, defaults to "output.txt".
+        Export DataFrame naar ee txt bestand.
+        Indien er geen object wordt oegewezen wordt een leeg bestand output.txt gemaakt. 
         """
         if file_name is None:
             file_name = "output.txt"
         file_path = os.path.join(os.getcwd(), file_name)
         
-        # Convert DataFrame to TSV-formatted string
+        # Converteren pandas dataframe naar TSV-format string
         df_string = self.dataframe.to_csv(index=False, sep='\t')
         
-        # Write string to text file
+        # TSV-format string wegschrijven
         with open(file_path, 'w') as file:
             file.write(df_string)
 
