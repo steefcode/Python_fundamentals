@@ -123,7 +123,8 @@ def optie3():
 
     sub_rapport = Subset_Rapporten(rapporten)
     icode_rapporten = sub_rapport.subset_icode(icode_keuze)
-    print(icode_rapporten)
+    clean_icode_rapporten = icode_rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['Icode']).reset_index(drop=True)
+    print(clean_icode_rapporten)
 
 def optie4():
     # Optie 4 toont de rapportages per inpsecteur. De gebruiker wordt gevraagd om een keuze te maken
@@ -145,12 +146,16 @@ def optie4():
 
     sub_rapport = Subset_Rapporten(rapporten)
     bcode_rapporten = sub_rapport.subset_bcode(bcode_keuze)
-    print(bcode_rapporten)
+    clean_bcode_rapporten = bcode_rapporten.fillna('').astype(str).replace('NaT', '').sort_values(by=['Bcode']).reset_index(drop=True)
+    print(clean_bcode_rapporten)
 
 def optie5():
     # Optie 5 plot een heatmap van het gassen bestand. De gebruiker maakt een keuze. 
     # Vervolgens wordt deze keuze weergegeven in een heatmap. 
 
+    beschikbare_kolommen = gassen.columns[2:]
+    print("Beschikbare kolommen voor de heatmap:", ", ".join(beschikbare_kolommen))
+    
     while True:
         input_gas = input("Voer naam van het gas in waar u een heatmap van wilt zien ")
         input_gas = input_gas.replace(" ", "") # Verwijderen van whitespaces
